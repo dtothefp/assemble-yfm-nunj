@@ -44,7 +44,10 @@ app.onLoad(/\.(?:hbs|md|html)$/, (file, next) => {
 app.preRender(/\.(?:hbs|md|html)$/, (file, next) => {
   console.log('Append Pre-Render Data Before Merge', file.data);
 
-  Object.assign(file.data, {title: 'From Pre-Render'});
+  Object.assign(file.data, {
+    title: 'From Pre-Render',
+    custom_stuff: 'Custom stuff from Pre-Render'
+  });
 
   console.log('Append Pre-Render Data After Merge', file.data);
   next();
@@ -54,8 +57,8 @@ app.preRender(/\.(?:hbs|md|html)$/, (file, next) => {
  * Store templates on the assemble cache by dirname and basename
  */
 app.option('renameKey', (fp) => {
-  const dirname = path.dirname(fp).split('/').slice(-1)[0];
-  const basename = path.basename(fp).split('.').slice(0)[0];
+  const [dirname] = path.dirname(fp).split('/').slice(-1);
+  const [basename] = path.basename(fp).split('.');
   return `${dirname}/${basename}`;
 });
 
