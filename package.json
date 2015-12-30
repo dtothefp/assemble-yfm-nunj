@@ -26,6 +26,7 @@
     "consolidate": "^0.13.1",
     "lodash": "^3.10.1",
     "nunjucks": "^2.2.0",
-    "parser-front-matter": "^1.3.0"
+    "parser-front-matter": "^1.3.0",
+    "through2": "^2.0.0"
   }
 }

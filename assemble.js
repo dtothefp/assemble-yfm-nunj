@@ -1,3 +1,4 @@
+import through from 'through2';
 import matter from 'parser-front-matter';
 import assemble from 'assemble-core';
 import nunjucks from 'nunjucks';
@@ -44,7 +45,7 @@ app.onLoad(/\.(?:hbs|md|html)$/, (file, next) => {
 app.preRender(/\.(?:hbs|md|html)$/, (file, next) => {
   console.log('Append Pre-Render Data Before Merge', file.data);
 
-  Object.assign(file.data, {
+  file.data = Object.assign({}, file.data, {
     title: 'From Pre-Render',
     custom_stuff: 'Custom stuff from Pre-Render'
   });
@@ -66,11 +67,22 @@ app.option('renameKey', (fp) => {
  * Make a `build` task for all html in the `templates/pages` directory
  */
 app.task('build', () => {
-  return app.src('./templates/pages/*.html')
+  return app.src('./templates/pages/**/*.html')
+    .pipe(through.obj(function(file, enc, cb) {
+      file.data = {title: 'blaahhhhh'}
+      this.push(file);
+      cb();
+    }))
     .pipe(app.renderFile())
     .pipe(app.dest('dist'))
     .on('error', (err) => {
-      console.error('[assemble]: build');
+      console.error('Error [assemble]: build');
+    })
+    .on('data', (file) => {
+      console.log('data', file.path);
+    })
+    .on('end', () => {
+      console.log('ended');
     });
 });
 
